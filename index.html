@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Next Word Prediction</title>
+  <meta charset="utf-8">
+  <meta name="description" content="Next Word Prediction">
+  <meta name="author" content="SH">
+  <meta name="generator" content="slidify" />
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta http-equiv="X-UA-Compatible" content="chrome=1">
+  <link rel="stylesheet" href="libraries/frameworks/io2012/css/default.css" media="all" >
+  <link rel="stylesheet" href="libraries/frameworks/io2012/css/phone.css" 
+    media="only screen and (max-device-width: 480px)" >
+  <link rel="stylesheet" href="libraries/frameworks/io2012/css/slidify.css" >
+  <link rel="stylesheet" href="libraries/highlighters/highlight.js/css/tomorrow.css" />
+  <base target="_blank"> <!-- This amazingness opens all links in a new tab. -->  
+  
+  <!-- Grab CDN jQuery, fall back to local if offline -->
+  <script src="http://ajax.aspnetcdn.com/ajax/jQuery/jquery-1.7.min.js"></script>
+  <script>window.jQuery || document.write('<script src="libraries/widgets/quiz/js/jquery.js"><\/script>')</script> 
+  <script data-main="libraries/frameworks/io2012/js/slides" 
+    src="libraries/frameworks/io2012/js/require-1.0.8.min.js">
+  </script>
+  
+  
+
+</head>
+<body style="opacity: 0">
+  <slides class="layout-widescreen">
+    
+    <!-- LOGO SLIDE -->
+        <slide class="title-slide segue nobackground">
+  <hgroup class="auto-fadein">
+    <h1>Next Word Prediction</h1>
+    <h2>Data Science Course#10 Capstone Course Project</h2>
+    <p>SH<br/></p>
+  </hgroup>
+  <article></article>  
+</slide>
+    
+
+    <!-- SLIDES -->
+    <slide class="" id="slide-1" style="background:;">
+  <hgroup>
+    <h2>Overview</h2>
+  </hgroup>
+  <article data-timings="">
+    <p>This is a course project aiming at learning natural language processing and developing a shiny application for next word prediction. Dictionaries of unigrams, bigrams, trigrams, and quadgrams were pregenerated from text files &quot;en_US.blogs.txt&quot; and &quot;en_US.news.txt&quot;. The Simple Stupid Backoff algorithm was used for the next word prediction. In the application, when you type in a phrase(s)/sentence(s), the application would give you up to five sugestions of the likely next word.</p>
+
+  </article>
+  <!-- Presenter Notes -->
+</slide>
+
+<slide class="class" id="1" style="background:;">
+  <hgroup>
+    <h2>How The Model Works and What Affects Its Predictive Performance</h2>
+  </hgroup>
+  <article data-timings="">
+    <p>The Simple Stupid Backoff algorithm is based on the fact that phrases have short-term memory, and thus, the likely next word can be predicted from only a few immediate previous words. In this application, the quadgram dictionary is first looked up for the word. If not found, the trigram dictionary is used, then the bigram dictionary. If still not found, five most-frequently-occurring words in the unigram dictionary are presented as the suggest word(s). </p>
+
+<p>It is conceivable that the predictive accuracy of this model depends heavily on the size and quality of the ngram dictionaries. In other words, building a high quality and good size ngram dictionary is the key to its performance, which requires assembly of many (training) text files processed by using a good memory-ample computer. Similarity of the training text files and the input phrases is another key for a successful prediction. (Due to this consideration, file &quot;en_US.twitter.txt&quot; was not used for dictionary building.) Finally, speed is another key for a good application, which was mitigated via an alphabet indexing method for ngram lookup.(It&#39;s still somewhat slow, though.)</p>
+
+  </article>
+  <!-- Presenter Notes -->
+</slide>
+
+<slide class="class" id="2" style="background:;">
+  <hgroup>
+    <h2>The Application</h2>
+  </hgroup>
+  <article data-timings="">
+    <p>Type in a few words in the &quot;Input Word(s)&quot; box. Hit the &quot;Go!&quot; button. The suggested next word will appear in the &quot;Suggested Next Word&quot; box. Note that while the suggested words is ordered from the most- to the least-frequently-occurring word, the probability of the word appearing is not calculated (which is not required by this project).</p>
+
+<p>Link to the application: <a href="https://sh2016.shinyapps.io/appnextwordprediction/">https://sh2016.shinyapps.io/appnextwordprediction/</a></p>
+
+<p>(Improvement ideas: Write more interface/code so that users can submit phrases to keep improving the ngram dictionaries and hence the prediction accuracy.)</p>
+
+  </article>
+  <!-- Presenter Notes -->
+</slide>
+
+<slide class="class" id="3" style="background:;">
+  <hgroup>
+    <h2>R Code Examples in the App</h2>
+  </hgroup>
+  <article data-timings="">
+    <pre><code class="r">library(tm); library(text2vec) # ...
+# remove URLs and non-ascii characters and punctuations
+removeURL &lt;- function(x) {...}; removePunc &lt;- function(x) {...}
+# build unigram dictionary
+tokens &lt;- newsT$content %&gt;% tolower() %&gt;% word_tokenizer()
+it &lt;- itoken(tokens, ids=newsT$id)
+vocab &lt;- create_vocabulary(it, ngram=c(1L,1L)) %&gt;% prune_vocabulary(term_count_min=2)
+vectorizer &lt;- vocab_vectorizer(vocab)
+dtm &lt;- tokens %&gt;% itoken() %&gt;% create_dtm(vectorizer)
+# next word prediction
+sentencePredict &lt;- function(aString) { # ...
+  predict.uni &lt;- function() { ... }; predict.bi &lt;- function(aWord) { ... }
+  predict.tri &lt;- function(twoWords) { ... };
+  predict.quad &lt;- function(threeWords) { # ...
+    # call predict.tri(twoWords) ... if quadgram not found, and so on
+    # ...
+  } }
+</code></pre>
+
+  </article>
+  <!-- Presenter Notes -->
+</slide>
+
+    <slide class="backdrop"></slide>
+  </slides>
+  <div class="pagination pagination-small" id='io2012-ptoc' style="display:none;">
+    <ul>
+      <li>
+      <a href="#" target="_self" rel='tooltip' 
+        data-slide=1 title='Overview'>
+         1
+      </a>
+    </li>
+    <li>
+      <a href="#" target="_self" rel='tooltip' 
+        data-slide=2 title='How The Model Works and What Affects Its Predictive Performance'>
+         2
+      </a>
+    </li>
+    <li>
+      <a href="#" target="_self" rel='tooltip' 
+        data-slide=3 title='The Application'>
+         3
+      </a>
+    </li>
+    <li>
+      <a href="#" target="_self" rel='tooltip' 
+        data-slide=4 title='R Code Examples in the App'>
+         4
+      </a>
+    </li>
+  </ul>
+  </div>  <!--[if IE]>
+    <script 
+      src="http://ajax.googleapis.com/ajax/libs/chrome-frame/1/CFInstall.min.js">  
+    </script>
+    <script>CFInstall.check({mode: 'overlay'});</script>
+  <![endif]-->
+</body>
+  <!-- Load Javascripts for Widgets -->
+  
+  <!-- LOAD HIGHLIGHTER JS FILES -->
+  <script src="libraries/highlighters/highlight.js/highlight.pack.js"></script>
+  <script>hljs.initHighlightingOnLoad();</script>
+  <!-- DONE LOADING HIGHLIGHTER JS FILES -->
+   
+  </html>
